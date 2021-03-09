@@ -112,6 +112,10 @@
 				}
 			}
 
+			.metadata {
+				font-size: 9px;
+			}
+
 			.public-key {
 				font-size: 9px;
 				margin-top:10px;

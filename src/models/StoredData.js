@@ -31,6 +31,7 @@ export class Account {
 		this.publicKey = null;
 		this.network = null;
 		this.fromDomain = null;
+		this.metadata = null;
 	}
 
 	static placeholder() {
@@ -93,7 +94,7 @@ export class Keychain {
 		return Buffer.from(key.sign(data)).toString('hex');
 	}
 
-	addAccount(name, privateKey, network, seed, fromDomain = null){
+	addAccount(name, privateKey, network, seed, fromDomain = null, metadata = null){
 		if(this.accounts.some(x => x.name === name && x.network === network)) return;
 
 		const key = privateKey instanceof PrivateKey ? privateKey : PrivateKey.fromString(privateKey);
@@ -101,7 +102,8 @@ export class Keychain {
 			name,
 			publicKey:key.publicKey.toString(),
 			network,
-			fromDomain
+			fromDomain,
+			metadata
 		});
 		this.accounts.push(account);
 		this.privateKeys[account.id] = AES.encrypt(key.toString(), seed);

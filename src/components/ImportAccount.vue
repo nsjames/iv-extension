@@ -101,6 +101,7 @@
 				const inserted = await InternalMessage.payload(InternalMessageTypes.INSERT_ACCOUNTS, {accounts, privateKey:key.toString()}).send();
 				if(inserted){
 					await this.regenerateIVData();
+					this.checkActiveAccount();
 					this.$emit('done', true);
 				} else {
 					// TODO: Error handling!

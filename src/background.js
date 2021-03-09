@@ -248,7 +248,12 @@ export default class Background {
 
 	[InternalMessageTypes.REQUEST_ADD_ACCOUNT](sendResponse, data){
 		this.lockGuard(sendResponse, async () => {
-			const {domain, network, privateKey, id:name} = data;
+			const {domain, network, privateKey, id:name, metadata} = data;
+			if(!!metadata && (typeof metadata !== "string" || metadata.length > 256)){
+				return sendResponse(Error.loginError('invalid_metadata', "Metadata must be a string, and less than or equal to 256 characters"))
+			}
+
+
 			if(!['Testnet', 'Mainnet', 'Previewnet'].includes(network))
 				return sendResponse(Error.loginError('invalid_network', `Only "Mainnet", "Testnet", and "Previewnet" networks are supported.`));
 
@@ -275,9 +280,9 @@ export default class Background {
 			if(storedData.keychain.accounts.find(x => x.name === name))
 				return sendResponse(Error.loginError('id_exists', 'The user already has this Account ID in their wallet.'));
 
-			PromptService.open(new Prompt(storedData.safe(), PromptTypes.REQUEST_ADD_ACCOUNT, domain, network, {domain, network, name, publicKey}, async approved => {
+			PromptService.open(new Prompt(storedData.safe(), PromptTypes.REQUEST_ADD_ACCOUNT, domain, network, {domain, network, name, publicKey, metadata}, async approved => {
 				if(approved){
-					const account = storedData.keychain.addAccount(name, key, network, seed, domain);
+					const account = storedData.keychain.addAccount(name, key, network, seed, domain, metadata);
 					const saved = await StorageService.save(storedData, seed);
 
 					if(!saved) return sendResponse(Error.loginError('error_saving', `There was an error saving this account to the user's wallet`));

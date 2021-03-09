@@ -112,9 +112,9 @@ export default class IVConnector {
 		});
 	}
 
-	addAccount(network, id, privateKey){
+	addAccount(network, id, privateKey, metadata = null){
 		network = formatNetwork(network);
-		return _send(NetworkMessageTypes.REQUEST_ADD_ACCOUNT, {network, id, privateKey}).then(account => {
+		return _send(NetworkMessageTypes.REQUEST_ADD_ACCOUNT, {network, id, privateKey, metadata}).then(account => {
 			if(account) this.useAccount(account);
 			return account;
 		});
